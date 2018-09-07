@@ -1,0 +1,387 @@
+# Your snippets
+#
+# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
+# expand the prefix into a larger code block with templated values.
+#
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+# '.source.coffee':
+#   'Console log':
+#     'prefix': 'log'
+#     'body': 'console.log $1'
+#
+# Each scope (e.g. '.source.coffee' above) can only be declared once.
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it in the
+# Atom Flight Manual:
+# http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
+
+# Requires the LPC language package
+'.source.lpc':
+  # Hermetic New Spells
+  'New_Spell_Hostile_No_Component':
+    'prefix': "newSpellHostile"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_targets_flags(Spell_Targets_Flags_Single_Hostile);
+          set_spell_generate_default_targets_rule(#'spell_find_attacker);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+        }
+
+      void spell_complete(descriptor process) {
+          spell_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Strong,
+                  Special_Attack_Power_Very_Strong,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+          ]));
+      }
+     """
+  'New_Spell_Caster_No_Component':
+    'prefix': "newSpellCaster"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+      object array spell_generate_default_targets_rule(object who);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+          set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+      }
+
+      object array spell_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      void spell_complete(descriptor process) {
+
+      }
+     """
+  'New_Spell_Caster_Enchantment_No_Component':
+    'prefix': "newSpellCasterEnchantment"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+      object array spell_generate_default_targets_rule(object who);
+      mixed spell_check_targets_rule(object array targets, object who, status initial);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_generate_default_manifestations_rule((: new(_Misc("")) :));
+          set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+          set_spell_check_targets_rule(#'spell_check_targets_rule);
+          set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+      }
+
+      object array spell_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+          retrun True;
+      }
+
+      void spell_complete(descriptor process) {
+          spell_install_personal_enchantment(process);
+      }
+     """
+   'New_Spell_Caster_Enchantment_With_Single_Component':
+     'prefix': "newSpellCasterEnchantmentComponentSingle"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <spell_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Spell");
+
+       void spell_complete(descriptor process);
+       object array spell_generate_default_targets_rule(object who);
+       mixed spell_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed spell_check_components_rule(object array components, object who, status initial);
+
+       void configure() {
+           ::configure();
+           set_spell_name("");
+           set_spell_common_name("");
+           set_spell_type("attack");
+           set_spell_summary("");
+           set_spell_requirements_description(
+               ""
+           );
+           set_spell_knowledge_requirement();
+           set_spell_generate_default_manifestations_rule((: new(_Misc("")) :));
+           set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+           set_spell_check_targets_rule(#'spell_check_targets_rule);
+           set_spell_check_components_rule(#'spell_check_components_rule);
+           set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+           set_spell_components_flags(Spell_Components_Flag_Required | Spell_Components_Flag_Single | Spell_Components_Flag_Inventory);
+
+       }
+
+       object array spell_generate_default_targets_rule(object who) {
+           return ({ who });
+       }
+
+       mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void spell_complete(descriptor process) {
+           spell_install_personal_enchantment(process);
+       }
+      """
+  # Hermetic Spell Steps
+  'Gesture_Step':
+    'prefix': 'gestureStep'
+    'body': """
+      add_spell_step(([
+          Spell_Step_Description                          : "",
+          Spell_Step_Type_Code                            : Spell_Step_Type_Gesture,
+          Spell_Step_Activity                             : Activity_Significant,
+          Spell_Step_Skills                               : Skill_Prestidigitation,
+          Spell_Step_Difficulty                           : Effect_Class_Greater,
+          Spell_Step_Importance                           : Effect_Class_Major,
+          Spell_Step_Cost                                 : Energy_Cost_By_Energy_And_Amount(Energy_Metabolic, 5),
+          Spell_Step_Limbs_Required                       : ([
+              Limb_Type_Hand                              : 2,
+          ]),
+          Spell_Step_Message                              : ([
+              Message_Content                             : ({
+
+              }),
+              Message_Senses                              : Message_Sense_Visual | Message_Sense_Tactile_For_Participants,
+          ]),
+          Spell_Step_Required                             : True,
+      ]));
+     """
+   'Praxis_Step':
+    'prefix': 'praxisStep'
+    'body': """
+      add_spell_step(([
+          Spell_Step_Description                          : "",
+          Spell_Step_Activity                             : Activity_Very_Simple,
+          Spell_Step_Type_Code                            : Spell_Step_Type_Praxis,
+          Spell_Step_Trismegon                            : ({ Skill_, Skill_, Skill_ }),
+          Spell_Step_Skeuos_Potency                       : 50,
+          Spell_Step_Difficulty                           : Effect_Class_Great,
+          Spell_Step_Importance                           : Effect_Class_Major,
+          Spell_Step_Required                             : True,
+          Spell_Step_Limbs_Required                       : ([
+              Limb_Type_Hand                              : 2,
+          ]),
+          Spell_Step_Message                              : ([
+              Message_Content                             : ({
+
+              }),
+              Message_Senses                              : Message_Sense_Visual | Message_Sense_Astral,
+          ]),
+      ]));
+     """
+  'Thought_Step':
+   'prefix': 'thoughtStep'
+   'body': """
+     add_spell_step(([
+         Spell_Step_Description                          : "",
+         Spell_Step_Type_Code                            : Spell_Step_Type_Thought,
+         Spell_Step_Activity                             : Activity_Minimal,
+         Spell_Step_Skills                               : ([
+             Skill_Concentration                         : 1.00,
+             Skill_Introspection                         : 1.00,
+         ]),
+         Spell_Step_Difficulty                           : Effect_Class_Minor,
+         Spell_Step_Importance                           : Effect_Class_Minor,
+         Spell_Step_Thought_Type                         : Thought_Type_Visualize,
+         Spell_Step_Thought_Key                          : "",
+         Spell_Step_Required                             : True,
+     ]));
+    """
+ #Hermetic Spell Completes
+  'Special_Attack_Target_Very_Strong':
+    'prefix': 'spellAttackStrong'
+    'body': """
+      void spell_complete(descriptor process) {
+          spell_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Strong,
+                  Special_Attack_Power_Very_Strong,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+         ]));
+       }
+    """
+  'Special_Attack_Target_Very_Extreme':
+    'prefix': 'spellAttackExtreme'
+    'body': """
+      void spell_complete(descriptor process) {
+          spell_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Extreme,
+                  Special_Attack_Power_Very_Extreme,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+         ]));
+       }
+    """
+  'Special_Attack_Target_Overwhelming':
+      'prefix': 'spellAttackOverwhelming'
+      'body': """
+        void spell_complete(descriptor process) {
+            spell_execute_typical_special_attack(process, ([
+                Special_Attack_Vector                   : Vector_,
+                Special_Attack_Power                    : ({
+                    Special_Attack_Power_Somewhat_Overwhelming,
+                    Special_Attack_Power_Very_Overwhelming,
+                }),
+                Special_Attack_Strike                   : ({
+                    Special_Attack_Strike_Somewhat_Accurate,
+                    Special_Attack_Strike_Very_Accurate,
+                }),
+                Special_Attack_Condition                : Telesma_Required,
+                Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+           ]));
+         }
+      """
+  #Various Hermetic Spell Knowledge Condition Dxrs
+  'Spell_Knowledge_Requirement_Skill_Total':
+      'prefix': 'spellKnowledgeTotal'
+      'body': """
+       set_spell_knowledge_requirement(([
+           Condition_Type_Code                 : Condition_Type_Total,
+           Condition_Value                     : ,
+           Condition_Info                      : ({
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_Arcane_Lore,
+               ]),
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_,
+               ]),
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_,
+                   Condition_Value             : 0.50,
+               ]),
+           }),
+       ]));
+
+       """
+  'Spell_Knowledge_Requirement_Exploration_Total':
+      'prefix': 'spellKnowledgeExploration'
+      'body': """
+       set_spell_knowledge_requirement(([
+           Condition_Type_Code                 : Condition_Type_Metric,
+           Condition_Value                     : ,
+           Condition_Info                      : "global exploration percentage",
+       ]));
+
+       """
+  'Spell_Knowledge_Requirement_Affiliation_History':
+     'prefix': 'spellKnowledgeAffiliationHistory'
+     'body': """
+      set_spell_knowledge_requirement(([
+          Condition_Type_Code         : Condition_Type_Or,
+          Condition_Info              : ({
+              ([
+                  Condition_Type_Code : Condition_Type_Affiliation,
+                  Condition_Info      : "",
+              ]),
+              ([
+                  Condition_Type_Code : Condition_Type_Affiliation_History,
+                  Condition_Info      : "",
+              ]),
+          }),
+      ]));
+
+      """
