@@ -1,5 +1,21 @@
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+# '.source.coffee':
+#   'Console log':
+#     'prefix': 'log'
+#     'body': 'console.log $1'
+#
+# Each scope (e.g. '.source.coffee' above) can only be declared once.
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it in the
+# Atom Flight Manual:
+# http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
 
-# Requires the LPC language package
+# Requires the LPC language package: https://github.com/starhound/language-lpc
 '.source.lpc':
   # Hermetic New Spells
   'New_Spell_Hostile_No_Component':
@@ -188,6 +204,118 @@
            spell_install_personal_enchantment(process);
        }
       """
+    'New_Spell_Caster_With_Single_Component':
+      'prefix': "newSpellCasterComponentSingle"
+      'body': """
+        #include <.h>
+        #include <activity.h>
+        #include <daemon.h>
+        #include <spell_step.h>
+        #include <spellcasting_process.h>
+        #include <spells.h>
+
+        inherit _Definition("Spell");
+
+        void spell_complete(descriptor process);
+        object array spell_generate_default_targets_rule(object who);
+        mixed spell_check_targets_rule(object array targets, object who, status initial);
+        varargs mixed spell_check_components_rule(object array components, object who, status initial);
+
+        void configure() {
+            ::configure();
+            set_spell_name("");
+            set_spell_common_name("");
+            set_spell_type("attack");
+            set_spell_summary("");
+            set_spell_requirements_description(
+                ""
+            );
+            set_spell_knowledge_requirement();
+            set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+            set_spell_check_targets_rule(#'spell_check_targets_rule);
+            set_spell_check_components_rule(#'spell_check_components_rule);
+            set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+            set_spell_components_flags(Spell_Components_Flag_Required | Spell_Components_Flag_Single | Spell_Components_Flag_Inventory);
+
+        }
+
+        object array spell_generate_default_targets_rule(object who) {
+             return ({ who });
+        }
+
+        mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+            retrun True;
+        }
+
+        varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+            return True;
+        }
+
+        void spell_complete(descriptor process) {
+            spell_install_personal_enchantment(process);
+        }
+       """
+   'New_Spell_Caster_Single_Component_Autoselect':
+     'prefix': "newSpellCasterComponentSingleAutoselect"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <spell_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Spell");
+
+       void spell_complete(descriptor process);
+       object array spell_generate_default_targets_rule(object who);
+       mixed spell_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed spell_check_components_rule(object array components, object who, status initial);
+       object array spell_generate_default_component(object who);
+
+       void configure() {
+           ::configure();
+           set_spell_name("");
+           set_spell_common_name("");
+           set_spell_type("attack");
+           set_spell_summary("");
+           set_spell_requirements_description(
+               ""
+           );
+           set_spell_knowledge_requirement();
+           set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+           set_spell_check_targets_rule(#'spell_check_targets_rule);
+           set_spell_check_components_rule(#'spell_check_components_rule);
+           set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+           set_spell_generate_default_components_rule(#'spell_generate_default_component);
+           set_spell_components_flags(Spell_Components_Flag_Default_Only);
+
+       }
+
+       object array spell_generate_default_component(object who) {
+
+       }
+
+       object array spell_generate_default_targets_rule(object who) {
+            return ({ who });
+       }
+
+       mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void spell_complete(descriptor process) {
+
+       }
+      """
   # Hermetic Spell Steps
   'Gesture_Step':
     'prefix': 'gestureStep'
@@ -253,7 +381,7 @@
          Spell_Step_Required                             : True,
      ]));
     """
- #Hermetic Spell Completes
+ #Hermetic Spell Completes Attacks
   'Special_Attack_Target_Very_Strong':
     'prefix': 'spellAttackStrong'
     'body': """
@@ -311,6 +439,51 @@
            ]));
          }
       """
+  #Spell Completes Using Different Variables
+   'Spell_Complete_Caster_Only_Performance':
+    'prefix': 'spellCompleteCasterOnlyPerformance'
+    'body': """
+      void spell_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Spellcasting_Process_Performance);
+
+      }
+     """
+   'Spell_Complete_Caster_Single_Component_And_Performance':
+    'prefix': 'spellCompleteCasterSingleComponentAndPerformance'
+    'body': """
+      void spell_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Spellcasting_Process_Performance);
+          object array components = Spellcasting_Process_Query(s_p, Spellcasting_Process_Components);
+          object component = components[0];
+      }
+     """
+   'Spell_Complete_Caster_Single_Argument_And_Performance':
+    'prefix': 'spellCompleteCasterSingleArgumentAndPerformance'
+    'body': """
+      void spell_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Spellcasting_Process_Performance);
+          string arg = implode(Spellcasting_Process_Query(spellcasting_process, Spellcasting_Process_Arguments), "_");
+
+      }
+      """
+   'Spell_Complete_Caster_Single_Argument_Component_Performance':
+    'prefix': 'spellCompleteCasterSingleArgumentComponentPerformance'
+    'body': """
+      void spell_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Spellcasting_Process_Performance);
+          string arg = implode(Spellcasting_Process_Query(spellcasting_process, Spellcasting_Process_Arguments), "_");
+          object array components = Spellcasting_Process_Query(s_p, Spellcasting_Process_Components);
+          object component = components[0];
+      }
+    """
   #Various Hermetic Spell Knowledge Condition Dxrs
   'Spell_Knowledge_Requirement_Skill_Total':
       'prefix': 'spellKnowledgeTotal'
@@ -364,3 +537,67 @@
       ]));
 
       """
+  'Spell_Knowledge_Requirement_Skill_And_Subject_Known':
+      'prefix': 'spellKnowledgeTotalAndSubject'
+      'body': """
+        set_spell_knowledge_requirement(([
+            Condition_Type_Code                     : Condition_Type_And,
+            Condition_Info                          : ({
+                ([
+                    Condition_Type_Code             : Condition_Type_Total,
+                    Condition_Value                 : ,
+                    Condition_Info                  : ({
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                    }),
+                ]),
+                ([
+                    Condition_Type_Code             : Condition_Type_Subject_Known,
+                    Condition_Info                  : "",
+                ]),
+            }),
+        ]));
+
+       """
+ #Gradual Heal Spell Complete
+  'Spell_Complete_Gradual_Heal_Effect':
+      'prefix': 'spellGradualHealEffect'
+      'body': """
+        descriptor spell_gradual_heal_effect(object who, object target, float performance) {
+             int class = round(scale_conversion(performance, 0.1, 1.0, Effect_Class_Minor, Effect_Class_Great));
+             descriptor effect = Effect_Type(Effect_Type_Gradual_Heal)->effect(([
+                 Effect_Actor                            : who,
+                 Effect_Subject                          : target,
+                 Effect_Class_Code                       : class,
+                 Effect_Flags                            : Effect_Flag_Advisory_Checks | Effect_Flag_Delay_Time_Estimable | Effect_Flag_Smart_Apportionment,
+                 Effect_Info                             : ([
+                     "System_Pre_Effect_Message"         : ({
+                         ([
+                             Message_Content             : ({
+
+                             }),
+                             Message_Senses              : Message_Sense_Visual | Message_Sense_Astral,
+                         ]),
+                     }),
+                     "System_Post_Effect_Message"        : ({
+                         ([
+                             Message_Content             : ({
+
+                             }),
+                             Message_Senses              : Message_Sense_Visual | Message_Sense_Astral,
+                         ]),
+                     }),
+                 ]),
+             ]));
+         }
+       """
