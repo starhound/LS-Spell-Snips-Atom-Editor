@@ -1,0 +1,86 @@
+'.source.lpc':
+  #Various Hermetic Spell Knowledge Condition Dxrs
+  'Spell_Knowledge_Requirement_Skill_Total':
+      'prefix': 'spellKnowledgeTotal'
+      'body': """
+       set_spell_knowledge_requirement(([
+           Condition_Type_Code                 : Condition_Type_Total,
+           Condition_Value                     : ,
+           Condition_Info                      : ({
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_Arcane_Lore,
+               ]),
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_,
+               ]),
+               ([
+                   Condition_Type_Code         : Condition_Type_Skill,
+                   Condition_Info              : Skill_,
+                   Condition_Value             : 0.50,
+               ]),
+           }),
+       ]));
+
+       """
+  'Spell_Knowledge_Requirement_Exploration_Total':
+      'prefix': 'spellKnowledgeExploration'
+      'body': """
+       set_spell_knowledge_requirement(([
+           Condition_Type_Code                 : Condition_Type_Metric,
+           Condition_Value                     : ,
+           Condition_Info                      : "global exploration percentage",
+       ]));
+
+       """
+  'Spell_Knowledge_Requirement_Affiliation_History':
+     'prefix': 'spellKnowledgeAffiliationHistory'
+     'body': """
+      set_spell_knowledge_requirement(([
+          Condition_Type_Code         : Condition_Type_Or,
+          Condition_Info              : ({
+              ([
+                  Condition_Type_Code : Condition_Type_Affiliation,
+                  Condition_Info      : "",
+              ]),
+              ([
+                  Condition_Type_Code : Condition_Type_Affiliation_History,
+                  Condition_Info      : "",
+              ]),
+          }),
+      ]));
+
+      """
+  'Spell_Knowledge_Requirement_Skill_And_Subject_Known':
+      'prefix': 'spellKnowledgeTotalAndSubject'
+      'body': """
+        set_spell_knowledge_requirement(([
+            Condition_Type_Code                     : Condition_Type_And,
+            Condition_Info                          : ({
+                ([
+                    Condition_Type_Code             : Condition_Type_Total,
+                    Condition_Value                 : ,
+                    Condition_Info                  : ({
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                        ([
+                            Condition_Type_Code     : Condition_Type_Skill,
+                            Condition_Info          : Skill_,
+                        ]),
+                    }),
+                ]),
+                ([
+                    Condition_Type_Code             : Condition_Type_Subject_Known,
+                    Condition_Info                  : "",
+                ]),
+            }),
+        ]));
+
+       """

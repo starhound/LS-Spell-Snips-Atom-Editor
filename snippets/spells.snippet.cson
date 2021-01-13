@@ -1,0 +1,301 @@
+# Requires the LPC language package: https://github.com/starhound/language-lpc
+'.source.lpc':
+  # Hermetic New Spells
+  'New_Spell_Hostile_No_Component':
+    'prefix': "newSpellHostile"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_targets_flags(Spell_Targets_Flags_Single_Hostile);
+          set_spell_generate_default_targets_rule(#'spell_find_attacker);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+        }
+
+      void spell_complete(descriptor process) {
+          spell_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Strong,
+                  Special_Attack_Power_Very_Strong,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+          ]));
+      }
+     """
+  'New_Spell_Caster_No_Component':
+    'prefix': "newSpellCaster"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+      object array spell_generate_default_targets_rule(object who);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+          set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+      }
+
+      object array spell_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      void spell_complete(descriptor process) {
+
+      }
+     """
+  'New_Spell_Caster_Enchantment_No_Component':
+    'prefix': "newSpellCasterEnchantment"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <spell_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Spell");
+
+      void spell_complete(descriptor process);
+      object array spell_generate_default_targets_rule(object who);
+      mixed spell_check_targets_rule(object array targets, object who, status initial);
+
+      void configure() {
+          ::configure();
+          set_spell_name("");
+          set_spell_common_name("");
+          set_spell_type("attack");
+          set_spell_summary("");
+          set_spell_requirements_description(
+              ""
+          );
+          set_spell_knowledge_requirement();
+          set_spell_generate_default_manifestations_rule((: new(_Misc("")) :));
+          set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+          set_spell_check_targets_rule(#'spell_check_targets_rule);
+          set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+          set_spell_components_flags(Spell_Components_Flag_None);
+
+      }
+
+      object array spell_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+          retrun True;
+      }
+
+      void spell_complete(descriptor process) {
+          spell_install_personal_enchantment(process);
+      }
+     """
+   'New_Spell_Caster_Enchantment_With_Single_Component':
+     'prefix': "newSpellCasterEnchantmentComponentSingle"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <spell_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Spell");
+
+       void spell_complete(descriptor process);
+       object array spell_generate_default_targets_rule(object who);
+       mixed spell_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed spell_check_components_rule(object array components, object who, status initial);
+
+       void configure() {
+           ::configure();
+           set_spell_name("");
+           set_spell_common_name("");
+           set_spell_type("attack");
+           set_spell_summary("");
+           set_spell_requirements_description(
+               ""
+           );
+           set_spell_knowledge_requirement();
+           set_spell_generate_default_manifestations_rule((: new(_Misc("")) :));
+           set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+           set_spell_check_targets_rule(#'spell_check_targets_rule);
+           set_spell_check_components_rule(#'spell_check_components_rule);
+           set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+           set_spell_components_flags(Spell_Components_Flag_Required | Spell_Components_Flag_Single | Spell_Components_Flag_Inventory);
+
+       }
+
+       object array spell_generate_default_targets_rule(object who) {
+           return ({ who });
+       }
+
+       mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void spell_complete(descriptor process) {
+           spell_install_personal_enchantment(process);
+       }
+      """
+    'New_Spell_Caster_With_Single_Component':
+      'prefix': "newSpellCasterComponentSingle"
+      'body': """
+        #include <.h>
+        #include <activity.h>
+        #include <daemon.h>
+        #include <spell_step.h>
+        #include <spellcasting_process.h>
+        #include <spells.h>
+
+        inherit _Definition("Spell");
+
+        void spell_complete(descriptor process);
+        object array spell_generate_default_targets_rule(object who);
+        mixed spell_check_targets_rule(object array targets, object who, status initial);
+        varargs mixed spell_check_components_rule(object array components, object who, status initial);
+
+        void configure() {
+            ::configure();
+            set_spell_name("");
+            set_spell_common_name("");
+            set_spell_type("attack");
+            set_spell_summary("");
+            set_spell_requirements_description(
+                ""
+            );
+            set_spell_knowledge_requirement();
+            set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+            set_spell_check_targets_rule(#'spell_check_targets_rule);
+            set_spell_check_components_rule(#'spell_check_components_rule);
+            set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+            set_spell_components_flags(Spell_Components_Flag_Required | Spell_Components_Flag_Single | Spell_Components_Flag_Inventory);
+
+        }
+
+        object array spell_generate_default_targets_rule(object who) {
+             return ({ who });
+        }
+
+        mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+            retrun True;
+        }
+
+        varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+            return True;
+        }
+
+        void spell_complete(descriptor process) {
+            spell_install_personal_enchantment(process);
+        }
+       """
+   'New_Spell_Caster_Single_Component_Autoselect':
+     'prefix': "newSpellCasterComponentSingleAutoselect"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <spell_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Spell");
+
+       void spell_complete(descriptor process);
+       object array spell_generate_default_targets_rule(object who);
+       mixed spell_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed spell_check_components_rule(object array components, object who, status initial);
+       object array spell_generate_default_component(object who);
+
+       void configure() {
+           ::configure();
+           set_spell_name("");
+           set_spell_common_name("");
+           set_spell_type("attack");
+           set_spell_summary("");
+           set_spell_requirements_description(
+               ""
+           );
+           set_spell_knowledge_requirement();
+           set_spell_targets_flags(Spell_Targets_Flag_Handle_Automatically);
+           set_spell_check_targets_rule(#'spell_check_targets_rule);
+           set_spell_check_components_rule(#'spell_check_components_rule);
+           set_spell_generate_default_targets_rule(#'spell_generate_default_targets_rule);
+           set_spell_generate_default_components_rule(#'spell_generate_default_component);
+           set_spell_components_flags(Spell_Components_Flag_Default_Only);
+
+       }
+
+       object array spell_generate_default_component(object who) {
+
+       }
+
+       object array spell_generate_default_targets_rule(object who) {
+            return ({ who });
+       }
+
+       mixed spell_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed spell_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void spell_complete(descriptor process) {
+
+       }
+      """

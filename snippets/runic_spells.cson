@@ -1,0 +1,301 @@
+# Requires the LPC language package: https://github.com/starhound/language-lpc
+'.source.lpc':
+  # Runic Spells New Spells
+  'New_Rune_Hostile_No_Component':
+    'prefix': "runeNewSpellHostile"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <rune_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Runic_Spell");
+
+      void rune_complete(descriptor process);
+
+      void configure() {
+          ::configure();
+          set_rune_name("");
+          set_rune_common_name("");
+          set_rune_type("attack");
+          set_rune_summary("");
+          set_rune_requirements_description(
+              ""
+          );
+          set_rune_knowledge_requirement();
+          set_rune_targets_flags(rune_Targets_Flags_Single_Hostile);
+          set_rune_generate_default_targets_rule(#'rune_find_attacker);
+          set_rune_components_flags(rune_Components_Flag_None);
+
+        }
+
+      void rune_complete(descriptor process) {
+          rune_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Strong,
+                  Special_Attack_Power_Very_Strong,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+          ]));
+      }
+     """
+  'New_Rune_Caster_No_Component':
+    'prefix': "runeNewSpellCaster"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <rune_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Runic_Spell");
+
+      void rune_complete(descriptor process);
+      object array rune_generate_default_targets_rule(object who);
+
+      void configure() {
+          ::configure();
+          set_rune_name("");
+          set_rune_common_name("");
+          set_rune_type("attack");
+          set_rune_summary("");
+          set_rune_requirements_description(
+              ""
+          );
+          set_rune_knowledge_requirement();
+          set_rune_targets_flags(rune_Targets_Flag_Handle_Automatically);
+          set_rune_generate_default_targets_rule(#'rune_generate_default_targets_rule);
+          set_rune_components_flags(rune_Components_Flag_None);
+
+      }
+
+      object array rune_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      void rune_complete(descriptor process) {
+
+      }
+     """
+  'New_Rune_Caster_Enchantment_No_Component':
+    'prefix': "runeNewSpellCasterEnchantment"
+    'body': """
+      #include <.h>
+      #include <activity.h>
+      #include <daemon.h>
+      #include <rune_step.h>
+      #include <spellcasting_process.h>
+      #include <spells.h>
+
+      inherit _Definition("Runic_Spell");
+
+      void rune_complete(descriptor process);
+      object array rune_generate_default_targets_rule(object who);
+      mixed rune_check_targets_rule(object array targets, object who, status initial);
+
+      void configure() {
+          ::configure();
+          set_rune_name("");
+          set_rune_common_name("");
+          set_rune_type("attack");
+          set_rune_summary("");
+          set_rune_requirements_description(
+              ""
+          );
+          set_rune_knowledge_requirement();
+          set_rune_generate_default_manifestations_rule((: new(_Misc("")) :));
+          set_rune_targets_flags(rune_Targets_Flag_Handle_Automatically);
+          set_rune_check_targets_rule(#'rune_check_targets_rule);
+          set_rune_generate_default_targets_rule(#'rune_generate_default_targets_rule);
+          set_rune_components_flags(rune_Components_Flag_None);
+
+      }
+
+      object array rune_generate_default_targets_rule(object who) {
+          return ({ who });
+      }
+
+      mixed rune_check_targets_rule(object array targets, object who, status initial) {
+
+          retrun True;
+      }
+
+      void rune_complete(descriptor process) {
+          rune_install_personal_enchantment(process);
+      }
+     """
+   'New_Rune_Caster_Enchantment_With_Single_Component':
+     'prefix': "runeNewSpellCasterEnchantmentComponentSingle"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <rune_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Runic_Spell");
+
+       void rune_complete(descriptor process);
+       object array rune_generate_default_targets_rule(object who);
+       mixed rune_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed rune_check_components_rule(object array components, object who, status initial);
+
+       void configure() {
+           ::configure();
+           set_rune_name("");
+           set_rune_common_name("");
+           set_rune_type("attack");
+           set_rune_summary("");
+           set_rune_requirements_description(
+               ""
+           );
+           set_rune_knowledge_requirement();
+           set_rune_generate_default_manifestations_rule((: new(_Misc("")) :));
+           set_rune_targets_flags(rune_Targets_Flag_Handle_Automatically);
+           set_rune_check_targets_rule(#'rune_check_targets_rule);
+           set_rune_check_components_rule(#'rune_check_components_rule);
+           set_rune_generate_default_targets_rule(#'rune_generate_default_targets_rule);
+           set_rune_components_flags(rune_Components_Flag_Required | rune_Components_Flag_Single | rune_Components_Flag_Inventory);
+
+       }
+
+       object array rune_generate_default_targets_rule(object who) {
+           return ({ who });
+       }
+
+       mixed rune_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed rune_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void rune_complete(descriptor process) {
+           rune_install_personal_enchantment(process);
+       }
+      """
+    'New_Rune_Caster_With_Single_Component':
+      'prefix': "runeNewSpellCasterComponentSingle"
+      'body': """
+        #include <.h>
+        #include <activity.h>
+        #include <daemon.h>
+        #include <rune_step.h>
+        #include <spellcasting_process.h>
+        #include <spells.h>
+
+        inherit _Definition("Runic_Spell");
+
+        void rune_complete(descriptor process);
+        object array rune_generate_default_targets_rule(object who);
+        mixed rune_check_targets_rule(object array targets, object who, status initial);
+        varargs mixed rune_check_components_rule(object array components, object who, status initial);
+
+        void configure() {
+            ::configure();
+            set_rune_name("");
+            set_rune_common_name("");
+            set_rune_type("attack");
+            set_rune_summary("");
+            set_rune_requirements_description(
+                ""
+            );
+            set_rune_knowledge_requirement();
+            set_rune_targets_flags(rune_Targets_Flag_Handle_Automatically);
+            set_rune_check_targets_rule(#'rune_check_targets_rule);
+            set_rune_check_components_rule(#'rune_check_components_rule);
+            set_rune_generate_default_targets_rule(#'rune_generate_default_targets_rule);
+            set_rune_components_flags(rune_Components_Flag_Required | rune_Components_Flag_Single | rune_Components_Flag_Inventory);
+
+        }
+
+        object array rune_generate_default_targets_rule(object who) {
+             return ({ who });
+        }
+
+        mixed rune_check_targets_rule(object array targets, object who, status initial) {
+
+            retrun True;
+        }
+
+        varargs mixed rune_check_components_rule(object array components, object who, status initial) {
+
+            return True;
+        }
+
+        void rune_complete(descriptor process) {
+            rune_install_personal_enchantment(process);
+        }
+       """
+   'New_Rune_Caster_Single_Component_Autoselect':
+     'prefix': "runeNewSpellCasterComponentSingleAutoselect"
+     'body': """
+       #include <.h>
+       #include <activity.h>
+       #include <daemon.h>
+       #include <rune_step.h>
+       #include <spellcasting_process.h>
+       #include <spells.h>
+
+       inherit _Definition("Runic_Spell");
+
+       void rune_complete(descriptor process);
+       object array rune_generate_default_targets_rule(object who);
+       mixed rune_check_targets_rule(object array targets, object who, status initial);
+       varargs mixed rune_check_components_rule(object array components, object who, status initial);
+       object array rune_generate_default_component(object who);
+
+       void configure() {
+           ::configure();
+           set_rune_name("");
+           set_rune_common_name("");
+           set_rune_type("attack");
+           set_rune_summary("");
+           set_rune_requirements_description(
+               ""
+           );
+           set_rune_knowledge_requirement();
+           set_rune_targets_flags(rune_Targets_Flag_Handle_Automatically);
+           set_rune_check_targets_rule(#'rune_check_targets_rule);
+           set_rune_check_components_rule(#'rune_check_components_rule);
+           set_rune_generate_default_targets_rule(#'rune_generate_default_targets_rule);
+           set_rune_generate_default_components_rule(#'rune_generate_default_component);
+           set_rune_components_flags(rune_Components_Flag_Default_Only);
+
+       }
+
+       object array rune_generate_default_component(object who) {
+
+       }
+
+       object array rune_generate_default_targets_rule(object who) {
+            return ({ who });
+       }
+
+       mixed rune_check_targets_rule(object array targets, object who, status initial) {
+
+           retrun True;
+       }
+
+       varargs mixed rune_check_components_rule(object array components, object who, status initial) {
+
+           return True;
+       }
+
+       void rune_complete(descriptor process) {
+
+       }
+      """

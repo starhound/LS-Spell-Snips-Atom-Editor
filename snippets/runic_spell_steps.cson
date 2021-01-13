@@ -1,0 +1,66 @@
+'.source.lpc':
+  # Runic Spell Steps
+  'Rune_Gesture_Step':
+    'prefix': 'runeGestureStep'
+    'body': """
+      add_rune_step(([
+          Spell_Step_Description                          : "",
+          Spell_Step_Type_Code                            : Spell_Step_Type_Gesture,
+          Spell_Step_Activity                             : Activity_Significant,
+          Spell_Step_Skills                               : Skill_Prestidigitation,
+          Spell_Step_Difficulty                           : Effect_Class_Greater,
+          Spell_Step_Importance                           : Effect_Class_Major,
+          Spell_Step_Cost                                 : Energy_Cost_By_Energy_And_Amount(Energy_Metabolic, 5),
+          Spell_Step_Limbs_Required                       : ([
+              Limb_Type_Hand                              : 2,
+          ]),
+          Spell_Step_Message                              : ([
+              Message_Content                             : ({
+
+              }),
+              Message_Senses                              : Message_Sense_Visual | Message_Sense_Tactile_For_Participants,
+          ]),
+          Spell_Step_Required                             : True,
+      ]));
+     """
+   'Rune_Praxis_Step':
+    'prefix': 'runePraxisStep'
+    'body': """
+      add_rune_step(([
+          Spell_Step_Description                          : "",
+          Spell_Step_Activity                             : Activity_Very_Simple,
+          Spell_Step_Type_Code                            : Spell_Step_Type_Praxis,
+          Spell_Step_Trismegon                            : ({ Skill_, Skill_, Skill_ }),
+          Spell_Step_Skeuos_Potency                       : 50,
+          Spell_Step_Difficulty                           : Effect_Class_Great,
+          Spell_Step_Importance                           : Effect_Class_Major,
+          Spell_Step_Required                             : True,
+          Spell_Step_Limbs_Required                       : ([
+              Limb_Type_Hand                              : 2,
+          ]),
+          Spell_Step_Message                              : ([
+              Message_Content                             : ({
+
+              }),
+              Message_Senses                              : Message_Sense_Visual | Message_Sense_Astral,
+          ]),
+      ]));
+     """
+  'Rune_Thought_Step':
+   'prefix': 'runeThoughtStep'
+   'body': """
+     add_rune_step(([
+         Spell_Step_Description                          : "",
+         Spell_Step_Type_Code                            : Spell_Step_Type_Thought,
+         Spell_Step_Activity                             : Activity_Minimal,
+         Spell_Step_Skills                               : ([
+             Skill_Concentration                         : 1.00,
+             Skill_Introspection                         : 1.00,
+         ]),
+         Spell_Step_Difficulty                           : Effect_Class_Minor,
+         Spell_Step_Importance                           : Effect_Class_Minor,
+         Spell_Step_Thought_Type                         : Thought_Type_Visualize,
+         Spell_Step_Thought_Key                          : "",
+         Spell_Step_Required                             : True,
+     ]));
+    """

@@ -1,0 +1,136 @@
+'.source.lpc':
+ #Runic Runic_Spell Completes Attacks
+  'Runic_Runic_Spell_Special_Attack_Target_Very_Strong':
+    'prefix': 'runeRunic_SpellAttackStrong'
+    'body': """
+      void rune_complete(descriptor process) {
+          rune_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Strong,
+                  Special_Attack_Power_Very_Strong,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+         ]));
+       }
+    """
+  'Special_Attack_Target_Very_Extreme':
+    'prefix': 'spellAttackExtreme'
+    'body': """
+      void rune_complete(descriptor process) {
+          rune_execute_typical_special_attack(process, ([
+              Special_Attack_Vector                   : Vector_,
+              Special_Attack_Power                    : ({
+                  Special_Attack_Power_Somewhat_Extreme,
+                  Special_Attack_Power_Very_Extreme,
+              }),
+              Special_Attack_Strike                   : ({
+                  Special_Attack_Strike_Somewhat_Accurate,
+                  Special_Attack_Strike_Very_Accurate,
+              }),
+              Special_Attack_Condition                : Telesma_Required,
+              Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+         ]));
+       }
+    """
+  'Special_Attack_Target_Overwhelming':
+      'prefix': 'spellAttackOverwhelming'
+      'body': """
+        void rune_complete(descriptor process) {
+            rune_execute_typical_special_attack(process, ([
+                Special_Attack_Vector                   : Vector_,
+                Special_Attack_Power                    : ({
+                    Special_Attack_Power_Somewhat_Overwhelming,
+                    Special_Attack_Power_Very_Overwhelming,
+                }),
+                Special_Attack_Strike                   : ({
+                    Special_Attack_Strike_Somewhat_Accurate,
+                    Special_Attack_Strike_Very_Accurate,
+                }),
+                Special_Attack_Condition                : Telesma_Required,
+                Special_Attack_Flags                    : Special_Attack_Flag_Always_Display | Special_Attack_Flag_Use_Attacker_Strike_Location | Special_Attack_Flag_Use_Combat_Mode,
+           ]));
+         }
+      """
+  #Runic_Spell Completes Using Different Variables
+   'Runic_Spell_Complete_Caster_Only_Performance':
+    'prefix': 'spellCompleteCasterOnlyPerformance'
+    'body': """
+      void rune_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Runic_Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Performance);
+
+      }
+     """
+   'Runic_Spell_Complete_Caster_Single_Component_And_Performance':
+    'prefix': 'spellCompleteCasterSingleComponentAndPerformance'
+    'body': """
+      void rune_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Runic_Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Performance);
+          object array components = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Components);
+          object component = components[0];
+      }
+     """
+   'Runic_Spell_Complete_Caster_Single_Argument_And_Performance':
+    'prefix': 'spellCompleteCasterSingleArgumentAndPerformance'
+    'body': """
+      void rune_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Runic_Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Performance);
+          string arg = implode(Spellcasting_Process_Query(spellcasting_process, Runic_Spellcasting_Process_Arguments), "_");
+
+      }
+      """
+   'Runic_Spell_Complete_Caster_Single_Argument_Component_Performance':
+    'prefix': 'spellCompleteCasterSingleArgumentComponentPerformance'
+    'body': """
+      void rune_complete(descriptor process) {
+          descriptor s_p = Process_Query_Info(process, "Runic_Spellcasting_Process");
+          object who = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Actor);
+          float performance = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Performance);
+          string arg = implode(Spellcasting_Process_Query(spellcasting_process, Runic_Spellcasting_Process_Arguments), "_");
+          object array components = Spellcasting_Process_Query(s_p, Runic_Spellcasting_Process_Components);
+          object component = components[0];
+      }
+    """
+ #Gradual Heal Runic_Spell Complete
+  'Runic_Spell_Complete_Gradual_Heal_Effect':
+      'prefix': 'spellGradualHealEffect'
+      'body': """
+        descriptor rune_gradual_heal_effect(object who, object target, float performance) {
+             int class = round(scale_conversion(performance, 0.1, 1.0, Effect_Class_Minor, Effect_Class_Great));
+             descriptor effect = Effect_Type(Effect_Type_Gradual_Heal)->effect(([
+                 Effect_Actor                            : who,
+                 Effect_Subject                          : target,
+                 Effect_Class_Code                       : class,
+                 Effect_Flags                            : Effect_Flag_Advisory_Checks | Effect_Flag_Delay_Time_Estimable | Effect_Flag_Smart_Apportionment,
+                 Effect_Info                             : ([
+                     "System_Pre_Effect_Message"         : ({
+                         ([
+                             Message_Content             : ({
+
+                             }),
+                             Message_Senses              : Message_Sense_Visual | Message_Sense_Astral,
+                         ]),
+                     }),
+                     "System_Post_Effect_Message"        : ({
+                         ([
+                             Message_Content             : ({
+
+                             }),
+                             Message_Senses              : Message_Sense_Visual | Message_Sense_Astral,
+                         ]),
+                     }),
+                 ]),
+             ]));
+         }
+       """
